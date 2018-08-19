@@ -19,6 +19,9 @@ def hello(name=None):
     print('---sessin:', session)
     return render_template('hello.html', name=name)
 
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 # set FLASK_APP = hello.py
 # set FLASK_ENV=development
