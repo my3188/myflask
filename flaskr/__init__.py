@@ -1,15 +1,18 @@
 import os
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 
 
 def create_app(test_config=None):
+    print('---------------create_app-----------------')
     print('---->> test_config=', test_config)
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    print('---->> app.instance_path=', app.instance_path)
-    print('---->> os.path.join=',
+    print('---->> app.instance_path = ', app.instance_path)
+    print('---->> os.path.join = ',
           os.path.join(app.instance_path, 'flaskr.sqlite'))
+    print('---->> app.config = ', app.config)
+    print('---->> app.config["ENV"] = ', app.config['ENV'])
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
@@ -31,14 +34,19 @@ def create_app(test_config=None):
     # a simple page that says hello
     @app.route('/')
     def hello():
+        return redirect(url_for('auth2.login'))
         return 'Hello, World! index page'
 
     from . import db
     db.init_app(app)
 
+    from . import auth
+    app.register_blueprint(auth.bp)
+    
     return app
 
 
-# set FLASK_APP = flaskr
-# set FLASK_ENV = development
+
+# set FLASK_APP=flaskr
+# set FLASK_ENV=development
 # flask run
