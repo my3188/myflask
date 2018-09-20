@@ -1,30 +1,55 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <button @click="onClick">点击我</button>
+
+    <button @click="onAdd">+</button>
+    <span class='num'
+      :class='{active:item.id==activeTab}'
+      @click='onShowTree(item)'
+      v-for="(item,index) in TabList"
+      v-if='!item.isDel'
+      :key="index">
+      {{item.id}}
+      <button @click.stop="onDel(item)">-</button>
+    </span>
+
+    <keep-alive>
+      <tree v-for="(item,index) in TabList"
+        v-if="item.id==activeTab"
+        :key='index'></tree>
+    </keep-alive>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import _ from "lodash";
+import tree from "./tree";
+let components = {};
 export default {
-  name: "HelloWorld",
+  name: "parent-component",
+  components: {
+    tree
+  },
   data() {
     return {
-      msg: "Welcome to Your Vue.js App"
+      activeTab: "",
+      TabList: []
     };
   },
+  computed: {
+
+  },
   methods: {
-    onClick() {
-      axios
-        .get("/api/index")
-        .then(function(response) {
-          console.log(response);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+    onShowTree(item) {
+      this.activeTab = item.id;
+    },
+    onAdd() {
+      let id = this.TabList.length;
+      let isDel = false;
+      this.TabList.push({ id,isDel });
+    },
+    onDel(item) {
+      item.isDel = true;
     }
   }
 };
@@ -46,5 +71,13 @@ li {
 }
 a {
   color: #42b983;
+}
+.num {
+  padding: 5px;
+  background: #42b983;
+  border: 1px solid yellow;
+}
+.num.active {
+  background: #ec7514;
 }
 </style>
